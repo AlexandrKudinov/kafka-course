@@ -1,0 +1,5 @@
+# Topic: 3 partitions, 2 replicas
+
+docker exec -it kafka-1 kafka-topics --create --topic test-topic --partitions 3 --replication-factor 2 --bootstrap-server kafka-1:19092
+
+docker exec -it kafka-1 kafka-topics --describe --topic test-topic --bootstrap-server kafka-1:19092

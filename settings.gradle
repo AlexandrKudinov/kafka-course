@@ -1,0 +1,3 @@
+rootProject.name = 'kafka-practice-2'
+
+include 'practical-2'
