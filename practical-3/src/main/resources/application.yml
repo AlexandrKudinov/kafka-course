@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: kafka-practical-3
+  kafka:
+    bootstrap-servers: ${kafka.bootstrap-servers}
+
+kafka:
+  bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+  topics:
+    messages: messages
+    filtered-messages: filtered_messages
+    blocked-users: blocked_users
+    banned-words: banned_words
+  streams:
+    application-id: message-filtering-service
+    state-dir: /tmp/kafka-practical-3
+    auto-offset-reset: earliest
+    num-stream-threads: 1
+    cache-max-bytes-buffering: 0
+    commit-interval-ms: 100
+    default-key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    default-value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+  topics-config:
+    partitions: 1
+    replication-factor: 3
