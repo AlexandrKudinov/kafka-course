@@ -2,3 +2,4 @@ rootProject.name = 'kafka-course'
 
 include 'practical-2'
 include 'practical-3'
+include 'practical-5'

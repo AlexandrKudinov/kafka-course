@@ -179,5 +179,88 @@ docker exec -i kafka-1 kafka-console-producer \
   --property parse.key=true \
   --property key.separator=: <<'EOF'
 global:{"words":["secret"]}
+```
+
+# Практическая работа 5
+
+Debezium Connector для PostgreSQL → Kafka и мониторинг Kafka Connect.
+
+### Запуск
+
+```bash
+docker compose -f docker-compose-practical-5.yml up -d
+```
+
+ Проверить контейнеры:
+
+```bash
+docker compose -f docker-compose-practical-5.yml ps
+```
+
+### Debezium Connector
+
+Зарегистрировать connector:
+
+```bash
+./practical-5/scripts/register-connector.sh
+```
+
+Проверить список connector-ов:
+
+```bash
+curl http://localhost:8083/connectors
+```
+
+Проверить статус:
+
+```bash
+curl http://localhost:8083/connectors/postgres-shop-connector/status
+```
+
+```bash
+docker exec -it kafka kafka-topics --list --bootstrap-server kafka:29092
+```
+
+## Тестовые данные
+
+Таблицы создаются автоматически из `postgres/init.sql`. Дополнительные изменения:
+
+```bash
+docker exec -i postgres psql -U postgres -d shop < practical-5/scripts/test-data.sql
+```
+
+### Чтение CDC через Java
+
+```bash
+./gradlew :practical-5:bootRun
+```
+
+Приложение читает оба Debezium topic и выводит события через SLF4J.
+
+### Тестовая запись в orders
+
+```bash
+docker exec -it postgres psql -U postgres -d shop -c "INSERT INTO orders (user_id, product_name, quantity) VALUES (1, 'Test Product', 5);"
+```
+
+ Проверка топика orders
+
+```bash
+docker exec -it kafka kafka-console-consumer \
+--bootstrap-server kafka:29092 \
+--topic practical5.public.orders \
+--from-beginning
+```
+
+> Примечание: Kafka Connect публикует свои JMX-метрики. Для полноценного Prometheus scrape в production-подобной конфигурации нужен JMX Prometheus Java Agent/экспортер. В этом учебном compose подготовлены Prometheus и конфигурация экспортера; при использовании конкретного образа Connect проверьте наличие агента в образе.
+
+## Проверка
+
+1. `docker compose ... up -d`.
+2. `curl http://localhost:8083/connectors/postgres-shop-connector/status` → `RUNNING`.
+3. Добавить/изменить строки в PostgreSQL.
+4. Проверить `practical5.public.users` и `practical5.public.orders`.
+5. Запустить Java consumer и увидеть CDC events в логах.
+6. Открыть Prometheus и Grafana и проверить метрики Kafka Connect.
 
 

@@ -1,0 +1,15 @@
+{
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "database.hostname": "postgres",
+  "database.port": "5432",
+  "database.user": "postgres",
+  "database.password": "postgres",
+  "database.dbname": "shop",
+  "topic.prefix": "practical5",
+  "plugin.name": "pgoutput",
+  "slot.name": "practical5_slot",
+  "publication.name": "practical5_publication",
+  "publication.autocreate.mode": "filtered",
+  "table.include.list": "public.users,public.orders",
+  "snapshot.mode": "initial"
+}

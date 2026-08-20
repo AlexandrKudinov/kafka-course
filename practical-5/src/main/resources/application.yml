@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: practical-5
+
+kafka:
+  bootstrap-servers: localhost:9092
+  consumer:
+    group-id: practical-5-cdc-consumer
+    auto-offset-reset: earliest
