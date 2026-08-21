@@ -252,8 +252,6 @@ docker exec -it kafka kafka-console-consumer \
 --from-beginning
 ```
 
-> Примечание: Kafka Connect публикует свои JMX-метрики. Для полноценного Prometheus scrape в production-подобной конфигурации нужен JMX Prometheus Java Agent/экспортер. В этом учебном compose подготовлены Prometheus и конфигурация экспортера; при использовании конкретного образа Connect проверьте наличие агента в образе.
-
 ## Проверка
 
 1. `docker compose ... up -d`.
