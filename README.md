@@ -252,7 +252,7 @@ docker exec -it kafka kafka-console-consumer \
 --from-beginning
 ```
 
-## Проверка
+### Проверка
 
 1. `docker compose ... up -d`.
 2. `curl http://localhost:8083/connectors/postgres-shop-connector/status` → `RUNNING`.
@@ -262,3 +262,129 @@ docker exec -it kafka kafka-console-consumer \
 6. Открыть Prometheus и Grafana и проверить метрики Kafka Connect.
 
 
+## Практическая работа 6
+
+Настройка защищённого SSL-соединения и управление доступом в Apache Kafka.
+
+Практическая работа 6 использует отдельный кластер из ZooKeeper и трёх Kafka broker. 
+Все подключения к Kafka выполняются по SSL с обязательной клиентской аутентификацией. 
+Доступ к топикам ограничивается Kafka ACL.
+
+
+### Запуск кластера 
+
+```bash
+docker compose -f docker-compose-practical-6.yml up -d
+```
+
+Проверка:
+
+```bash
+docker compose -f docker-compose-practical-6.yml ps
+```
+
+Должны работать:
+
+```text
+practical6-zookeeper
+practical6-kafka-0
+practical6-kafka-1
+practical6-kafka-2
+```
+
+Kafka broker должны получить статус `healthy`.
+
+###  Проверка SSL
+
+```bash
+docker exec practical6-kafka-0 \
+  kafka-broker-api-versions \
+  --bootstrap-server kafka-0:9093,kafka-1:9093,kafka-2:9093 \
+  --command-config /tmp/admin.properties
+```
+
+Если команда возвращает список API broker, admin-клиент успешно подключился к Kafka по SSL.
+
+### Создание топиков и ACL
+
+После запуска всех broker:
+
+```bash
+./practical-6/scripts/create-topics-and-acls.sh
+```
+
+Создаются:
+
+```text
+topic-1
+topic-2
+```
+
+Оба топика имеют 3 partition и replication factor 3.
+
+Проверка:
+
+```bash
+docker exec practical6-kafka-0 kafka-topics \
+  --list \
+  --bootstrap-server kafka-0:9093,kafka-1:9093,kafka-2:9093 \
+  --command-config /tmp/admin.properties
+```
+
+Подробная информация:
+
+```bash
+docker exec practical6-kafka-0 kafka-topics \
+  --describe --topic topic-1 \
+  --bootstrap-server kafka-0:9093,kafka-1:9093,kafka-2:9093 \
+  --command-config /tmp/admin.properties
+```
+
+Аналогично для `topic-2`. Команды также находятся в `practical-6/topic.txt`.
+
+###  ACL
+
+| Principal | topic-1 | topic-2 |
+|---|---|---|
+| `producer` | WRITE, DESCRIBE | WRITE, DESCRIBE |
+| `consumer` | READ, DESCRIBE | READ отсутствует |
+| `admin` | полный доступ | полный доступ |
+
+Для consumer дополнительно разрешена consumer group `practical-6-consumer`.
+
+Проверка ACL:
+
+```bash
+docker exec practical6-kafka-0 kafka-acls \
+  --list \
+  --bootstrap-server kafka-0:9093,kafka-1:9093,kafka-2:9093 \
+  --command-config /tmp/admin.properties
+```
+
+### Проверки доступов
+
+```bash
+./practical-6/scripts/test-access.sh
+```
+
+Ожидаемый результат:
+
+```text
+topic-1 producer       -> успешно
+topic-1 consumer       -> успешно
+
+topic-2 producer       -> успешно
+topic-2 consumer       -> AuthorizationException / TopicAuthorizationException
+```
+
+### Проверка
+
+```
+После выполнения:
+
+- ZooKeeper работает;
+- 3 broker работают по SSL;
+- `topic-1` доступен producer и consumer;
+- `topic-2` доступен producer, но недоступен consumer;
+- сертификаты и keystore/truststore находятся в репозитории;
+- Java producer/consumer настроены на SSL.

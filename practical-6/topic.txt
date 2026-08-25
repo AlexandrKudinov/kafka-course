@@ -1,0 +1,9 @@
+# Создание топиков
+
+docker exec practical6-kafka-0 kafka-topics --create --if-not-exists --topic topic-1 --partitions 3 --replication-factor 3 --bootstrap-server kafka-0:9093,kafka-1:9093,kafka-2:9093 --command-config /tmp/admin.properties
+docker exec practical6-kafka-0 kafka-topics --create --if-not-exists --topic topic-2 --partitions 3 --replication-factor 3 --bootstrap-server kafka-0:9093,kafka-1:9093,kafka-2:9093 --command-config /tmp/admin.properties
+
+# Подробная информация
+
+docker exec practical6-kafka-0 kafka-topics --describe --topic topic-1 --bootstrap-server kafka-0:9093,kafka-1:9093,kafka-2:9093 --command-config /tmp/admin.properties
+docker exec practical6-kafka-0 kafka-topics --describe --topic topic-2 --bootstrap-server kafka-0:9093,kafka-1:9093,kafka-2:9093 --command-config /tmp/admin.properties

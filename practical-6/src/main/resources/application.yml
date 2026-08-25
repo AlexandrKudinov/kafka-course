@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: practical-6
+
+kafka:
+  bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
+  security-protocol: SSL
+  truststore-location: ${user.dir}/practical-6/certs/client.truststore.jks
+  truststore-password: password
+  producer:
+    keystore-location: ${user.dir}/practical-6/certs/producer.keystore.jks
+    keystore-password: password
+    key-password: password
+    topic: topic-1
+  consumer:
+    keystore-location: ${user.dir}/practical-6/certs/consumer.keystore.jks
+    keystore-password: password
+    key-password: password
+    topic: topic-1
+    group-id: practical-6-consumer
+
+  endpoint-identification-algorithm: https
