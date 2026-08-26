@@ -493,3 +493,6 @@ Received: topic=practical7-messages partition=... offset=... value=...
 ## 5. Построение схемы в NiFi
 
 вручную
+
+cкрин UI NiFi с настройкой вычитки
+./practical-7/src/main/resources/img.png
