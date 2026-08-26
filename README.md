@@ -1,6 +1,5 @@
 # Практические работы по Apache Kafka
 
-
 ## Практическая работа 2
 
 В модуле реализованы один producer и два consumer-а для Kafka.
@@ -18,7 +17,6 @@ docker compose up -d
 ```
 
 Kafka UI -> http://localhost:8080
-
 
 ### Создание topic:
 
@@ -39,12 +37,12 @@ docker exec -it kafka-1 kafka-topics   --describe   --topic test-topic   --boots
 ```bash
 ./gradlew :practical-2:build
 ```
+
 Запуск:
 
 ```bash
 ./gradlew :practical-2:bootRun
 ```
-
 
 ### Consumer groups
 
@@ -86,7 +84,6 @@ blocked-users-store
 После проверки блокировки сообщение проходит цензуру. Запрещённые слова заменяются
 на `***`, после чего сообщение отправляется в `filtered_messages`.
 
-
 ### Запуск
 
 Поднимаем кластер :
@@ -110,12 +107,12 @@ http://localhost:8080
 
 Для работы используются четыре Kafka topic:
 
-| Topic | Partitions | Replication factor |
-|---|---:|---:|
-| `messages` | 1 | 3 |
-| `filtered_messages` | 1 | 3 |
-| `blocked_users` | 1 | 3 |
-| `banned_words` | 1 | 3 |
+| Topic               | Partitions | Replication factor |
+|---------------------|-----------:|-------------------:|
+| `messages`          |          1 |                  3 |
+| `filtered_messages` |          1 |                  3 |
+| `blocked_users`     |          1 |                  3 |
+| `banned_words`      |          1 |                  3 |
 
 Создаем топики:
 
@@ -141,7 +138,6 @@ docker exec -it kafka-1 kafka-topics   --create   --topic banned_words   --parti
 docker exec -it kafka-1 kafka-topics   --list   --bootstrap-server kafka-1:19092
 ```
 
-
 ### Проверка работы приложения
 
 Запустить тестовые данные:
@@ -162,7 +158,12 @@ docker exec -it kafka-1 kafka-console-consumer \
 Ожидается сообщение от `user-3`, например:
 
 ```json
-{"id":"2","senderId":"user-3","recipientId":"user-1","text":"hello *** ***"}
+{
+  "id": "2",
+  "senderId": "user-3",
+  "recipientId": "user-1",
+  "text": "hello *** ***"
+}
 ```
 
 Сообщение от `user-2` в `filtered_messages` отсутствует, потому что `user-2`
@@ -191,7 +192,7 @@ Debezium Connector для PostgreSQL → Kafka и мониторинг Kafka Con
 docker compose -f docker-compose-practical-5.yml up -d
 ```
 
- Проверить контейнеры:
+Проверить контейнеры:
 
 ```bash
 docker compose -f docker-compose-practical-5.yml ps
@@ -243,7 +244,7 @@ docker exec -i postgres psql -U postgres -d shop < practical-5/scripts/test-data
 docker exec -it postgres psql -U postgres -d shop -c "INSERT INTO orders (user_id, product_name, quantity) VALUES (1, 'Test Product', 5);"
 ```
 
- Проверка топика orders
+Проверка топика orders
 
 ```bash
 docker exec -it kafka kafka-console-consumer \
@@ -261,17 +262,15 @@ docker exec -it kafka kafka-console-consumer \
 5. Запустить Java consumer и увидеть CDC events в логах.
 6. Открыть Prometheus и Grafana и проверить метрики Kafka Connect.
 
-
 ## Практическая работа 6
 
 Настройка защищённого SSL-соединения и управление доступом в Apache Kafka.
 
-Практическая работа 6 использует отдельный кластер из ZooKeeper и трёх Kafka broker. 
-Все подключения к Kafka выполняются по SSL с обязательной клиентской аутентификацией. 
+Практическая работа 6 использует отдельный кластер из ZooKeeper и трёх Kafka broker.
+Все подключения к Kafka выполняются по SSL с обязательной клиентской аутентификацией.
 Доступ к топикам ограничивается Kafka ACL.
 
-
-### Запуск кластера 
+### Запуск кластера
 
 ```bash
 docker compose -f docker-compose-practical-6.yml up -d
@@ -294,7 +293,7 @@ practical6-kafka-2
 
 Kafka broker должны получить статус `healthy`.
 
-###  Проверка SSL
+### Проверка SSL
 
 ```bash
 docker exec practical6-kafka-0 \
@@ -342,13 +341,13 @@ docker exec practical6-kafka-0 kafka-topics \
 
 Аналогично для `topic-2`. Команды также находятся в `practical-6/topic.txt`.
 
-###  ACL
+### ACL
 
-| Principal | topic-1 | topic-2 |
-|---|---|---|
-| `producer` | WRITE, DESCRIBE | WRITE, DESCRIBE |
-| `consumer` | READ, DESCRIBE | READ отсутствует |
-| `admin` | полный доступ | полный доступ |
+| Principal  | topic-1         | topic-2          |
+|------------|-----------------|------------------|
+| `producer` | WRITE, DESCRIBE | WRITE, DESCRIBE  |
+| `consumer` | READ, DESCRIBE  | READ отсутствует |
+| `admin`    | полный доступ   | полный доступ    |
 
 Для consumer дополнительно разрешена consumer group `practical-6-consumer`.
 
@@ -388,3 +387,109 @@ topic-2 consumer       -> AuthorizationException / TopicAuthorizationException
 - `topic-2` доступен producer, но недоступен consumer;
 - сертификаты и keystore/truststore находятся в репозитории;
 - Java producer/consumer настроены на SSL.
+```
+
+# Практическая работа 7
+
+Практическая работа состоит из двух частей:
+
+1. Развёртывание и настройка Kafka-кластера.
+2. Интеграция Kafka с Apache NiFi.
+
+## 1. Локальная инфраструктура
+
+Запуск из корня проекта:
+
+```bash
+docker compose -f docker-compose-practical-7.yml up -d
+```
+
+Проверка:
+
+```bash
+docker compose -f docker-compose-practical-7.yml ps
+```
+
+Проверка Kafka:
+
+```bash
+docker exec practical7-kafka-0 \
+  kafka-broker-api-versions \
+  --bootstrap-server kafka-0:9092,kafka-1:9092,kafka-2:9092
+```
+
+Schema Registry:
+
+```bash
+curl http://localhost:8081/subjects
+```
+
+NiFi:
+
+```text
+https://localhost:8443/nifi
+```
+
+## 2. Создание топика и схемы
+
+```bash
+./practical-7/scripts/create-topic-and-schema.sh
+```
+
+Проверка:
+
+```bash
+docker exec practical7-kafka-0 kafka-topics \
+  --describe \
+  --topic practical7-messages \
+  --bootstrap-server kafka-0:9092,kafka-1:9092,kafka-2:9092
+```
+
+Проверка Schema Registry:
+
+```bash
+curl http://localhost:8081/subjects
+```
+
+## 3. Producer
+
+Собрать проект:
+
+```bash
+./gradlew :practical-7:build
+```
+
+Запустить producer:
+
+```bash
+./gradlew :practical-7:bootRun --args='produce'
+```
+
+Producer отправляет 10 JSON-сообщений в `practical7-messages`.
+
+Проверить сообщения:
+
+```bash
+docker exec -it practical7-kafka-0 kafka-console-consumer \
+  --bootstrap-server kafka-0:9092,kafka-1:9092,kafka-2:9092 \
+  --topic practical7-messages \
+  --from-beginning
+```
+
+## 4. Consumer
+
+В отдельном терминале:
+
+```bash
+./gradlew :practical-7:bootRun --args='consume'
+```
+
+Consumer читает сообщения и выводит:
+
+```text
+Received: topic=practical7-messages partition=... offset=... value=...
+```
+
+## 5. Построение схемы в NiFi
+
+вручную

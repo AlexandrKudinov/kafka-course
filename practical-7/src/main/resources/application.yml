@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: practical-7
+
+kafka:
+  bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
+  topic: practical7-messages
+  consumer:
+    group-id: practical-7-consumer
+    auto-offset-reset: earliest
+    enable-auto-commit: true
+
+schema-registry:
+  url: http://localhost:8081
