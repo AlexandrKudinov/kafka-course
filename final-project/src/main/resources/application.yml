@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: final-project
+
+kafka:
+  primary:
+    bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
+  secondary:
+    bootstrap-servers: localhost:49092,localhost:59092,localhost:6092
+  ssl:
+    truststore-location: ${user.dir}/certs/client.truststore.jks
+    shop-keystore-location: ${user.dir}/certs/shop.keystore.jks
+    client-keystore-location: ${user.dir}/certs/client.keystore.jks
+    streams-keystore-location: ${user.dir}/certs/streams.keystore.jks
+    analytics-keystore-location: ${user.dir}/certs/analytics.keystore.jks
+    password: password
+  topics:
+    products: shop-products
+    forbidden-products: forbidden-products
+    filtered-products: filtered-products
+    client-requests: client-requests
+    recommendations: recommendations
+
+shop-api:
+  products-file: ${user.dir}/data/products.json

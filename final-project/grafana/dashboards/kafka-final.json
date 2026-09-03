@@ -1,0 +1,9 @@
+{
+  "title": "Final project Kafka",
+  "panels": [
+    {"type":"timeseries","title":"Kafka broker up","targets":[{"expr":"up{job=\"kafka\"}"}]},
+    {"type":"timeseries","title":"Kafka Connect up","targets":[{"expr":"up{job=\"kafka-connect\"}"}]}
+  ],
+  "schemaVersion": 39,
+  "version": 1
+}

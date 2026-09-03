@@ -1,0 +1,62 @@
+[
+  {
+    "productId": "p-001",
+    "name": "Smart Watch XYZ",
+    "description": "Smart watch with GPS and notifications",
+    "price": {"amount": 4999.99, "currency": "RUB"},
+    "category": "electronics",
+    "brand": "XYZ",
+    "stock": {"available": 150, "reserved": 20},
+    "sku": "XYZ-12345",
+    "tags": ["smart watch", "gadgets"],
+    "createdAt": "2026-09-01T10:00:00Z",
+    "updatedAt": "2026-09-01T10:00:00Z",
+    "index": "products",
+    "storeId": "store-001"
+  },
+  {
+    "productId": "p-002",
+    "name": "Running Shoes",
+    "description": "Lightweight running shoes",
+    "price": {"amount": 7999.00, "currency": "RUB"},
+    "category": "sport",
+    "brand": "RunPro",
+    "stock": {"available": 80, "reserved": 5},
+    "sku": "RUN-100",
+    "tags": ["running", "sport"],
+    "createdAt": "2026-09-01T10:00:00Z",
+    "updatedAt": "2026-09-01T10:00:00Z",
+    "index": "products",
+    "storeId": "store-001"
+  },
+  {
+    "productId": "p-003",
+    "name": "Restricted Product",
+    "description": "Product used to demonstrate filtering",
+    "price": {"amount": 1999.00, "currency": "RUB"},
+    "category": "restricted",
+    "brand": "Demo",
+    "stock": {"available": 10, "reserved": 0},
+    "sku": "DEMO-003",
+    "tags": ["demo"],
+    "createdAt": "2026-09-01T10:00:00Z",
+    "updatedAt": "2026-09-01T10:00:00Z",
+    "index": "products",
+    "storeId": "store-001"
+  },
+  {
+    "productId": "p-004",
+    "name": "Wireless Headphones",
+    "description": "Noise cancelling wireless headphones",
+    "price": {"amount": 12999.00, "currency": "RUB"},
+    "category": "electronics",
+    "brand": "SoundMax",
+    "stock": {"available": 45, "reserved": 3},
+    "sku": "SND-004",
+    "tags": ["audio", "headphones"],
+    "createdAt": "2026-09-01T10:00:00Z",
+    "updatedAt": "2026-09-01T10:00:00Z",
+    "index": "products",
+    "storeId": "store-002"
+  }
+]
